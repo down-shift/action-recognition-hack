@@ -7,16 +7,11 @@ import torch.nn as nn
 from torchvision import transforms
 import os
 from torch.utils.data import Dataset
-from tqdm import tqdm
-import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-import timm
-from dataset import *
 import warnings
 import pandas as pd
 
 
-
+# функция для чтения видео
 def read_video(path, frames_num=8):
     frames = []
     cap = cv2.VideoCapture(path)
@@ -34,7 +29,7 @@ def read_video(path, frames_num=8):
     return frames
 
 
-
+# класс тестового датасета
 class VideoDataset(Dataset):
     def __init__(self, root, classes, num_frames, transform=None, mean_frames=False):
         self.num_frames = num_frames
@@ -59,8 +54,8 @@ class VideoDataset(Dataset):
         if self.transform:
             frames = self.transform(frames)
         return (frames, self.video_paths[idx])
-    
 
+# функция для выбора топ 5 классов по предсказанию модели
 def get_top_props(inputs):
     top_probs = {}
     with torch.no_grad():
@@ -73,7 +68,7 @@ def get_top_props(inputs):
             top_probs[CLASSES[i]] = probs[i].item()
     return top_probs
 
-
+# функция для предобработки фреймов
 def get_frames(path):
     transform = transforms.Compose([
         transforms.Lambda(lambda x: x / 255.),
@@ -86,19 +81,22 @@ def get_frames(path):
     return video
     
 
+
 if __name__ == "__main__":
     # configs:
-    DATA_DIR = "Train Dataset/videos/cartwheel/(Rad)Schlag_die_Bank!_cartwheel_f_cm_np1_le_med_0.avi"  
-    SUB_NAME = 'sub.csv'
-    CLASSES = {0: 'cartwheel',1: 'catch', 2: 'clap', 3: 'climb', 4: 'dive', 5: 'draw_sword', 6: 'dribble', 7: 'fencing', 8: 'flic_flac', 9: 'golf', 10: 'handstand', 11: 'hit',                  12: 'jump', 13: 'pick', 14: 'pour', 15: 'pullup', 16: 'push', 17: 'pushup', 18: 'shoot_ball', 19: 'sit', 20: 'situp', 21: 'swing_baseball', 22: 'sword_exercise',                  23: 'throw'}
+    DATA_DIR = "videos/cartwheel/(Rad)Schlag_die_Bank!_cartwheel_f_cm_np1_le_med_0.avi"  # путь до видео
+    WEIGHTS = 'resnet3d50_final.pt' # путь до весов
+    CLASSES = {0: 'cartwheel',1: 'catch', 2: 'clap', 3: 'climb', 4: 'dive', 5: 'draw_sword', 6: 'dribble', 7: 'fencing', 8: 'flic_flac', 9: 'golf', 10: 'handstand', 11: 'hit', 12: 'jump', 13: 'pick', 14: 'pour', 15: 'pullup', 16: 'push', 17: 'pushup', 18: 'shoot_ball', 19: 'sit', 20: 'situp', 21: 'swing_baseball', 22: 'sword_exercise', 23: 'throw'}
+    # все наши классы
     SEED = 42
+    
     
     warnings.filterwarnings("ignore")
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+    
     model = torch.hub.load('facebookresearch/pytorchvideo', 'slow_r50', pretrained=True)
     model.blocks[5].proj = nn.Linear(in_features=2048, out_features=24, bias=True)
-    model.load_state_dict(torch.load('slow r50', map_location=torch.device(device)))
+    model.load_state_dict(torch.load(WEIGHTS, map_location=torch.device(device)))
     model = model.to(device)
     
     video = get_frames(DATA_DIR)
