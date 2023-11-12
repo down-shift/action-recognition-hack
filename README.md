@@ -5,4 +5,4 @@
 
 Веса моделей можно скачать по ссылкам:
 - X3D-M – https://www.dropbox.com/scl/fi/rdyayyv05skgy37jwkn0q/x3d_m_ep8_0.8206.pt?rlkey=uypxsbrzrmcef6ullofqal56r&dl=0
-- 3D-ResNet50 – (скоро появится)
+- 3D-ResNet50 – https://www.dropbox.com/scl/fi/faasaev125gb3c5ntl51y/res3d_weights?rlkey=g8fmrj2v4io5ysol23g6ew2in&dl=0
