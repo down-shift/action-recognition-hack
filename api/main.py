@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from fastapi.params import Header
 from sqlalchemy.orm import Session
 
+from api.cvision import analyze_video
 from count_frames import count_frames_and_duration
 from database import engine
 from models.records import Record
@@ -69,6 +70,7 @@ async def upload_video(file: Annotated[UploadFile, File(description="A file read
     with open(new_path, 'wb') as f:
         f.write(file.file.read())
     num_of_frames, duration = count_frames_and_duration(new_path)
+    result = analyze_video(new_path)
     with Session(engine) as session:
         record = Record(
             date=date,
@@ -77,7 +79,8 @@ async def upload_video(file: Annotated[UploadFile, File(description="A file read
             file_path=new_path,
             request_headers=user_agent,
             processing_time=0,
-            video_len=duration
+            video_len=duration,
+            classes=result
         )
         session.add(record)
         session.commit()
