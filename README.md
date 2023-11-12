@@ -1,2 +1,8 @@
-# action-recognition-hack
-Code for Leaders of Digital Stavropol 2023 hackathon
+# ВИЖН – интеллектуальный анализ видео
+
+## Запуск моделей
+В файлах back_x3d.py и back_resnet.py находится код для запуска моделей на одном видео. Выдается топ-5 предсказаний с вероятностями по каждому из классов. Чтобы запустить скрипт, нужно указать в переменной DATA_DIR путь до видео, по которому делается предсказание, а в WEIGHTS – путь к весам модели.
+
+Веса моделей можно скачать по ссылкам:
+- X3D-M – https://www.dropbox.com/scl/fi/rdyayyv05skgy37jwkn0q/x3d_m_ep8_0.8206.pt?rlkey=uypxsbrzrmcef6ullofqal56r&dl=0
+- 3D-ResNet50 – (скоро появится)
